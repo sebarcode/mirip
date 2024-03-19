@@ -2,7 +2,6 @@ package adapter
 
 import (
 	"github.com/samber/lo"
-	"modernc.org/mathutil"
 )
 
 type Levenshtein struct {
@@ -19,13 +18,13 @@ func NewLevenshtein() *Levenshtein {
 	}
 }
 
+// Compare menghasilkan angka antara 0 - 1, dimana 1 = identik
 func (m *Levenshtein) Compare(a, b string) float64 {
 	distance, maxLen := m.distance(a, b)
 	return 1 - float64(distance)/float64(maxLen)
 }
 
-// Distance returns the Levenshtein distance between a and b. Lower distances
-// indicate closer matches. A distance of 0 means the strings are identical.
+// Distance menghitung jarak levenstein
 func (m *Levenshtein) Distance(a, b string) int {
 	distance, _ := m.distance(a, b)
 	return distance
@@ -34,14 +33,12 @@ func (m *Levenshtein) Distance(a, b string) int {
 func (m *Levenshtein) distance(a, b string) (int, int) {
 	runesA, runesB := []rune(a), []rune(b)
 
-	// Check if both terms are empty.
 	lenA, lenB := len(runesA), len(runesB)
 	if lenA == 0 && lenB == 0 {
 		return 0, 0
 	}
 
-	// Check if one of the terms is empty.
-	maxLen := mathutil.Max(lenA, lenB)
+	maxLen := lo.Max([]int{lenA, lenB})
 	if lenA == 0 {
 		return m.InsertCost * lenB, maxLen
 	}
@@ -49,13 +46,11 @@ func (m *Levenshtein) distance(a, b string) (int, int) {
 		return m.DeleteCost * lenA, maxLen
 	}
 
-	// Initialize cost slice.
 	prevCol := make([]int, lenB+1)
 	for i := 0; i <= lenB; i++ {
 		prevCol[i] = i
 	}
 
-	// Calculate distance.
 	col := make([]int, lenB+1)
 	for i := 0; i < lenA; i++ {
 		col[0] = i + 1
