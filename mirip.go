@@ -35,7 +35,7 @@ func Compare(adapter Adapter, txt string, minimal float64, ignoreCase bool, othe
 	mapScores := make(map[string]float64)
 	for _, other := range others {
 		originalOther := other
-		if !ignoreCase {
+		if ignoreCase {
 			other = strings.ToLower(other)
 		}
 
@@ -43,7 +43,8 @@ func Compare(adapter Adapter, txt string, minimal float64, ignoreCase bool, othe
 		if ok {
 			continue
 		}
-
+		other = sortNamePhrase(other)
+		txt = sortNamePhrase(txt)
 		cmp := adapter.Compare(txt, other)
 
 		if cmp < minimal {
@@ -76,4 +77,14 @@ func (r KvScores) Swap(i, j int) {
 	tmp := r[i]
 	r[i] = r[j]
 	r[j] = tmp
+}
+
+func sortNamePhrase(name string) string {
+	words := strings.Split(name, " ")
+	if len(words) == 1 {
+		return name
+	}
+
+	sort.Strings(words)
+	return strings.Join(words, " ")
 }
