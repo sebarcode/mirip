@@ -19,7 +19,7 @@ type Adapter interface {
 	Compare(string, string) float64
 }
 
-func Compare(adapter Adapter, txt string, minimal float64, ignoreCase bool, others ...string) (string, error) {
+func Compare(adapter Adapter, txt string, minimal float64, ignoreCase bool, others ...string) (string, float64, error) {
 	originalTxt := txt
 	_, ok := lo.Find(others, func(other string) bool {
 		if ignoreCase {
@@ -29,7 +29,7 @@ func Compare(adapter Adapter, txt string, minimal float64, ignoreCase bool, othe
 		return txt == other
 	})
 	if ok {
-		return originalTxt, nil
+		return originalTxt, 0, nil
 	}
 
 	mapScores := make(map[string]float64)
@@ -54,7 +54,7 @@ func Compare(adapter Adapter, txt string, minimal float64, ignoreCase bool, othe
 	}
 
 	if len(mapScores) == 0 {
-		return "", errors.New("not found")
+		return "", 0, errors.New("not found")
 	}
 
 	scores := KvScores(lo.MapToSlice(mapScores, func(k string, v float64) kvScore {
@@ -62,7 +62,7 @@ func Compare(adapter Adapter, txt string, minimal float64, ignoreCase bool, othe
 	}))
 
 	sort.Sort(scores)
-	return scores[0].Key, nil
+	return scores[0].Key, scores[0].Score, nil
 }
 
 func (r KvScores) Len() int {

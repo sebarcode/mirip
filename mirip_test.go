@@ -20,7 +20,7 @@ var (
 
 func TestFindLevenExact(t *testing.T) {
 	convey.Convey("prepare", t, func() {
-		s, ok := mirip.Compare(adapter.NewLevenshtein(), testNameFix, 1, false, names...)
+		s, _, ok := mirip.Compare(adapter.NewLevenshtein(), testNameFix, 1, false, names...)
 		convey.So(ok, convey.ShouldBeNil)
 		convey.Printf(" %s = %s\n", testNameFix, s)
 	})
@@ -28,7 +28,7 @@ func TestFindLevenExact(t *testing.T) {
 
 func TestFindLevenSimilar(t *testing.T) {
 	convey.Convey("prepare", t, func() {
-		s, ok := mirip.Compare(adapter.NewLevenshtein(), testNameSimilar, minimalScore, false, names...)
+		s, _, ok := mirip.Compare(adapter.NewLevenshtein(), testNameSimilar, minimalScore, false, names...)
 		convey.So(ok, convey.ShouldBeNil)
 		convey.Printf(" %s = %s\n", testNameSimilar, s)
 	})
@@ -36,8 +36,17 @@ func TestFindLevenSimilar(t *testing.T) {
 
 func TestFindLevenReverse(t *testing.T) {
 	convey.Convey("prepare", t, func() {
-		s, ok := mirip.Compare(adapter.NewLevenshtein(), testNameReverse, minimalScore, false, names...)
+		s, _, ok := mirip.Compare(adapter.NewLevenshtein(), testNameReverse, minimalScore, false, names...)
 		convey.So(ok, convey.ShouldBeNil)
 		convey.Printf(" %s = %s\n", testNameReverse, s)
+	})
+}
+
+func TestFindDepts(t *testing.T) {
+	convey.Convey("prepare", t, func() {
+		testDept := "Digital Marketing"
+		s, score, ok := mirip.Compare(adapter.NewLevenshtein(), testDept, 0.001, false, "Sales", "Marketing", "Human Resources Department", "Engineering", "Project", "Finance")
+		convey.So(ok, convey.ShouldBeNil)
+		convey.Printf(" %s = %s score %f\n", testDept, s, score)
 	})
 }
