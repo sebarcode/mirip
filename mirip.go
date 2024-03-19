@@ -19,23 +19,23 @@ type Adapter interface {
 	Compare(string, string) float64
 }
 
-func Compare(adapter Adapter, txt string, minimal float64, ignoreCase bool, others ...string) (string, float64, error) {
-	originalTxt := txt
-	_, ok := lo.Find(others, func(other string) bool {
-		if ignoreCase {
-			other = strings.ToLower(other)
+func Compare(adapter Adapter, txt string, minimal float64, caseSensitive bool, others ...string) (string, float64, error) {
+	originalOther, ok := lo.Find(others, func(other string) bool {
+		smallOther := other
+		if !caseSensitive {
+			smallOther = strings.ToLower(other)
 			txt = strings.ToLower(txt)
 		}
-		return txt == other
+		return txt == smallOther
 	})
 	if ok {
-		return originalTxt, 0, nil
+		return originalOther, 0, nil
 	}
 
 	mapScores := make(map[string]float64)
 	for _, other := range others {
 		originalOther := other
-		if ignoreCase {
+		if !caseSensitive {
 			other = strings.ToLower(other)
 		}
 
