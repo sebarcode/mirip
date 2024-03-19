@@ -43,19 +43,19 @@ func TestFindLevenReverse(t *testing.T) {
 	})
 }
 
-func TestFindLevenNotExist(t *testing.T) {
-	convey.Convey("prepare", t, func() {
-		_, _, ok := mirip.Compare(adapter.NewLevenshtein(), testNameNotExist, minimalScore, false, names...)
-		convey.So(ok, convey.ShouldNotBeNil)
-		convey.Printf("\ncompare value = %s\n", ok.Error())
-	})
-}
-
 func TestFindDepts(t *testing.T) {
 	convey.Convey("prepare", t, func() {
 		testDept := "Digital Marketing"
 		s, score, ok := mirip.Compare(adapter.NewLevenshtein(), testDept, 0.001, false, "Sales", "Marketing", "Human Resources Department", "Engineering", "Project", "Finance")
 		convey.So(ok, convey.ShouldBeNil)
 		convey.Printf(" %s = %s score %f\n", testDept, s, score)
+	})
+}
+
+func TestFindLevenNotExist(t *testing.T) {
+	convey.Convey("prepare", t, func() {
+		_, _, ok := mirip.Compare(adapter.NewLevenshtein(), testNameNotExist, minimalScore, false, names...)
+		convey.So(ok, convey.ShouldNotBeNil)
+		convey.Printf("\ncompare value = %s\n", ok.Error())
 	})
 }
